@@ -9,10 +9,20 @@ function draw(points, context, {
   for(let i = 1; i < points.length; i++) {
     context.lineTo(...points[i]);
   }
+
   if(close) context.closePath();
   if(fillStyle) {
     context.fillStyle = fillStyle;
     context.fill();
+  }
+
+  context.stroke();
+
+  for(let i = 1; i < points.length; i++) {
+    context.strokeStyle = 'blue';
+    context.beginPath()
+    context.moveTo(0, 0)
+    context.lineTo(...points[i]);
   }
   context.stroke();
 }
@@ -24,6 +34,7 @@ export function parametric(sFunc, tFunc, rFunc) {
     for(let i = 0; i <= seg; i++) {
       const p = i / seg;
       const t = start * (1 - p) + end * p;
+      console.log(start, end, t)
       const x = sFunc(t, ...args);
       const y = tFunc(t, ...args);
       if(rFunc) {

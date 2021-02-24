@@ -71,4 +71,8 @@ export class Vector2D extends Array {
 
     return this;
   }
+
+  translate(v) {
+    return this.add(new Vector2D(...v))
+  }
 }

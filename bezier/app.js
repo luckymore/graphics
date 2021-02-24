@@ -31,9 +31,9 @@ const quadricBezier = parametric(
 );
 
 const p0 = new Vector2D(0, 0);
-const p1 = new Vector2D(100, 0);
+const p1 = new Vector2D(50, 0);
 p1.rotate(0.75);
-const p2 = new Vector2D(200, 0);
+const p2 = new Vector2D(100, 0);
 const count = 30;
 for(let i = 0; i < count; i++) {
   p1.rotate(2 / count * Math.PI);

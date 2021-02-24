@@ -1,5 +1,6 @@
 import {earcut} from '../common/lib/earcut.js';
 import {Vector2D} from '../common/lib/vector2d.js';
+import Tess2 from '../common/lib/tess2.js'
 
 function inTriangle(p1, p2, p3, point) {
   const a = p2.copy().sub(p1);
@@ -12,6 +13,7 @@ function inTriangle(p1, p2, p3, point) {
 
   const s1 = Math.sign(a.cross(u1));
   let p = a.dot(u1) / a.length ** 2;
+  // u1 在 a 边的线段上
   if(s1 === 0 && p >= 0 && p <= 1) return true;
 
   const s2 = Math.sign(b.cross(u2));
@@ -42,6 +44,7 @@ function isPointInPath({vertices, cells}, point) {
 const canvas = document.querySelector('canvas');
 const gl = canvas.getContext('webgl');
 
+// 1、创建 webGL 程序
 const vertex = `
 attribute vec2 position;
 uniform vec4 u_color;
@@ -93,9 +96,10 @@ const vertices = [
   [-0.45, 0.0],
 ];
 
+// 2、写入缓存数据
 const points = vertices.flat();
 const triangles = earcut(points);
-// console.log(triangles);
+console.log(triangles);
 
 const position = new Float32Array(points);
 const cells = new Uint16Array(triangles);
@@ -104,6 +108,7 @@ const pointBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, pointBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, position, gl.STATIC_DRAW);
 
+// 3、将缓冲数据读取到 GPU
 const vPosition = gl.getAttribLocation(program, 'position');
 gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0);
 gl.enableVertexAttribArray(vPosition);
@@ -113,7 +118,7 @@ gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cellsBuffer);
 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, cells, gl.STATIC_DRAW);
 
 const colorLoc = gl.getUniformLocation(program, 'u_color');
-gl.uniform4fv(colorLoc, [1, 0, 0, 1]);
+gl.uniform4fv(colorLoc, [1, 0, 0, 0.5]);
 
 gl.clear(gl.COLOR_BUFFER_BIT);
 gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);
@@ -124,14 +129,15 @@ canvas.addEventListener('mousemove', (evt) => {
   // 坐标转换
   const offsetX = 2 * (x - left) / canvas.width - 1.0;
   const offsetY = 1.0 - 2 * (y - top) / canvas.height;
+  // console.log(x, y, left, top)
 
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  const colorLoc = gl.getUniformLocation(program, 'u_color');
+  // const colorLoc = gl.getUniformLocation(program, 'u_color');  // 这一行好像没用哇
   if(isPointInPath({vertices, cells}, new Vector2D(offsetX, offsetY))) {
     gl.uniform4fv(colorLoc, [0, 0.5, 0, 1]);
   } else {
-    gl.uniform4fv(colorLoc, [1, 0, 0, 1]);
+    gl.uniform4fv(colorLoc, [1, 0, 0, 0.5]);
   }
 
   gl.drawElements(gl.TRIANGLES, cells.length, gl.UNSIGNED_SHORT, 0);

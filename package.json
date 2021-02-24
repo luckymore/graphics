@@ -17,6 +17,7 @@
     "http-server": "^0.12.1"
   },
   "dependencies": {
-    "rough": "^3.0.1"
+    "rough": "^3.0.1",
+    "tess2": "^1.0.0"
   }
 }
