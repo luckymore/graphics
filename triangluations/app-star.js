@@ -1,3 +1,4 @@
+// https://github.com/gltjk/learn-visualization/blob/65d2b107a9/common/lib/Canvas.js
 import { Vector2D } from '../common/lib/vector2d.js'
 
 const canvas = document.querySelector('canvas')

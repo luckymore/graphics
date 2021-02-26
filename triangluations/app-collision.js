@@ -1,6 +1,7 @@
 import {earcut} from '../common/lib/earcut.js';
 import {Vector2D} from '../common/lib/vector2d.js';
 import Tess2 from '../common/lib/tess2.js'
+console.log(Tess2)
 
 function inTriangle(p1, p2, p3, point) {
   const a = p2.copy().sub(p1);
@@ -101,6 +102,14 @@ const points = vertices.flat();
 const triangles = earcut(points);
 console.log(triangles);
 
+const triangles2 = Tess2.tesselate({
+	contours: [points],
+	windingRule: Tess2.WINDING_ODD,
+	elementType: Tess2.POLYGONS,
+	polySize: 10,
+	vertexSize: 2
+});
+console.log(triangles2)
 const position = new Float32Array(points);
 const cells = new Uint16Array(triangles);
 
