@@ -34,6 +34,8 @@ const vertex = `
     );
     gl_PointSize = 1.0;
     vec3 pos = translateMatrix * rotateMatrix * scaleMatrix * vec3(position, 1.0);
+    // vec3 pos = scaleMatrix * translateMatrix * rotateMatrix * vec3(position, 1.0);
+    // vec3 pos = rotateMatrix * translateMatrix * rotateMatrix * vec3(position, 1.0);
     gl_Position = vec4(pos, 1.0);
     vP = p;
   }
@@ -94,8 +96,11 @@ function randomTriangles() {
   return {u_color, u_rotation, u_scale, u_time, u_duration, u_dir, startTime};
 }
 
+
 function setUniforms(gl, {u_color, u_rotation, u_scale, u_time, u_duration, u_dir}) {
+  // gl.getUniformLocation 拿到uniform变量的指针
   let loc = gl.getUniformLocation(program, 'u_color');
+  // 将数据传给 uniform 变量的地址
   gl.uniform4fv(loc, u_color);
 
   loc = gl.getUniformLocation(program, 'u_rotation');
@@ -114,18 +119,23 @@ function setUniforms(gl, {u_color, u_rotation, u_scale, u_time, u_duration, u_di
   gl.uniform2fv(loc, u_dir);
 }
 
+
 let triangles = [];
-function update(t) {
+
+function update() {
   for(let i = 0; i < 5 * Math.random(); i++) {
     triangles.push(randomTriangles());
   }
   gl.clear(gl.COLOR_BUFFER_BIT);
+  
+  // 对每个三角形重新设置u_time
   triangles.forEach((triangle) => {
     triangle.u_time = (performance.now() - triangle.startTime) / 1000;
     setUniforms(gl, triangle);
     gl.drawArrays(gl.TRIANGLES, 0, position.length / 2);
   });
 
+  // 移除已经结束动画的三角形
   triangles = triangles.filter((triangle) => {
     return triangle.u_time <= triangle.u_duration;
   });
