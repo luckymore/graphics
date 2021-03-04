@@ -21,4 +21,5 @@ function update(t) {
   requestAnimationFrame(update);
 }
 
-update(0);
+update(0)
+// requestAnimationFrame(update);

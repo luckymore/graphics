@@ -33,7 +33,8 @@ const vertex = `
       0.0, 0.0, 1.0
     );
     gl_PointSize = 1.0;
-    vec3 pos = translateMatrix * rotateMatrix * scaleMatrix * vec3(position, 1.0);
+    // vec3 pos = translateMatrix * rotateMatrix * scaleMatrix * vec3(position, 1.0);
+    vec3 pos = translateMatrix * scaleMatrix * rotateMatrix * vec3(position, 1.0);
     // vec3 pos = scaleMatrix * translateMatrix * rotateMatrix * vec3(position, 1.0);
     // vec3 pos = rotateMatrix * translateMatrix * rotateMatrix * vec3(position, 1.0);
     gl_Position = vec4(pos, 1.0);
