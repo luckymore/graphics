@@ -12,7 +12,7 @@
 
       void main() {
           vec2 st = gl_FragCoord.xy/u_resolution.xy;
-          gl_FragColor=vec4(st.x,st.y,0.0,1.0);
+          gl_FragColor=vec4(st.x,st.y,sin(u_time),1.0);
       }
   </script>
   <script>
@@ -69,6 +69,7 @@
 
       function render() {
           uniforms.u_time.value += 0.05;
+        //   console.log(uniforms)
           renderer.render( scene, camera );
       }
   </script>

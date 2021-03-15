@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>MDN Games: Shaders demo</title>
+    <style>
+        body { margin: 0; padding: 0; font-size: 0; }
+    </style>
+</head>
+<body>
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <script>
+        const canvas = document.getElementById('canvas')
+        const gl = canvas.getContext('webgl')
+
+
+        // const vx_s = `
+        //     void main() {
+        //         gl_PointSize = 100.0;
+        //         gl_Position = vec4(0.0, 0.0, 1.0, 1.0);
+        //     }
+        // `
+
+        const vx_s = `
+          attribute vec2 position;
+          varying vec3 color;
+
+          void main() {
+            gl_PointSize = 1.0;
+            color = vec3(0.5 + position * 0.5, 0.0);
+            gl_Position = vec4(position, 1.0, 1.0);
+          }
+        `
+
+        const fragment = `
+          precision mediump float;
+
+          void main()
+          {
+            gl_FragColor = vec4(0.5, 0.0, 1.0, 1.0);
+          }    
+        `
+
+        const xvO = gl.createShader(gl.VERTEX_SHADER)
+        const xvS = gl.shaderSource(xvO, vx_s)
+        gl.compileShader(xvO)
+
+        const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER)
+        gl.shaderSource(fragmentShader, fragment)
+        gl.compileShader(fragmentShader)
+
+        // 创建着色器程序
+        const glP = gl.createProgram()
+        gl.attachShader(glP, xvO)
+        gl.attachShader(glP, fragmentShader)
+        gl.linkProgram(glP)
+        gl.useProgram(glP)
+
+        // 写入数据
+        const points = new Float32Array([1, 1, -1, -1])
+        const bufferId = gl.createBuffer()
+        gl.bindBuffer(gl.ARRAY_BUFFER, bufferId)
+        gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW)
+
+        const vPosition = gl.getAttribLocation(glP, 'position')
+        gl.vertexAttribPointer(vPosition, 2, gl.FLOAT, false, 0, 0)
+        gl.enableVertexAttribArray(vPosition)
+
+        gl.clear(gl.COLOR_BUFFER_BIT)
+        gl.drawArrays(gl.LINE_LOOP, 0, points.length / 2)
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>放大镜</title>
+    <style>
+      #canvas2 {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" width="526" height="526"></canvas>
+    <canvas id="canvas2" width="526" height="526"></canvas>
+    <script>
+      var scale = 3
+      var mr = 150
+      var photo = {
+        //初始化
+        init () {
+          var that = this
+
+          that.canvas = document.getElementById('canvas')
+          that.ctx = that.canvas.getContext('2d')
+
+          that.canvas2 = document.getElementById('canvas2')
+          that.ctx2 = that.canvas2.getContext('2d')
+
+          that.canvas.width = 295 * 2
+          that.canvas.height = 171 * 2
+
+          that.canvas2.width = that.canvas.width * scale
+          that.canvas2.height = that.canvas.height * scale
+          that.image1 = new Image()
+          that.image1.src = 'assets/explode.jpg'
+
+          that.image2 = new Image()
+          that.image2.src = 'assets/explode.jpg'
+
+          that.image1.onload = function () {
+            that.ctx.drawImage(that.image1, 0, 0, that.canvas.width, that.canvas.height)
+          }
+
+          that.image2.onload = function () {
+            that.ctx2.drawImage(that.image2, 0, 0, that.canvas2.width, that.canvas2.height)
+            that.moveEvt()
+          }
+        },
+
+        bigerImage (x, y) {
+          var that = this
+          var imageX = x * scale,
+            imageY = y * scale,
+            sx = imageX - mr,
+            sy = imageY - mr
+
+          var dx = x - mr,
+            dy = y - mr
+
+          that.ctx.save()
+
+          that.ctx.strokeStyle = '#9eddf1'
+          that.ctx.lineWidth = 3
+
+          that.ctx.beginPath()
+          that.ctx.arc(x, y, mr, 0, Math.PI * 2)
+
+          that.ctx.shadowColor = '#6ed25b'
+          that.ctx.shadowBlur = 10
+
+          that.ctx.stroke()
+          that.ctx.clip()
+
+          that.ctx.drawImage(that.canvas2, sx, sy, 2 * mr, 2 * mr, dx, dy, 2 * mr, 2 * mr)
+
+          that.ctx.restore()
+        },
+
+        //移动
+        moveEvt () {
+          var that = this
+          that.canvas.onmousedown = function (e) {
+            that.flag = true
+            that.showImage(e)
+          }
+
+          that.canvas.onmousemove = function (e) {
+            if (that.flag) {
+              that.showImage(e)
+            }
+          }
+
+          that.canvas.onmouseup = function (e) {
+            that.hideImage(e)
+          }
+
+          that.canvas.onmouseout = function (e) {
+            that.hideImage(e)
+          }
+        },
+
+        showImage (e) {
+          e.preventDefault()
+          var x = e.offsetX,
+            y = e.offsetY,
+            that = this
+          // that.ctx.clearRect(0, 0, that.canvas.width, that.canvas.height)
+          that.ctx.drawImage(that.image1, 0, 0, that.canvas.width, that.canvas.height)
+          that.bigerImage(x, y)
+        },
+
+        hideImage (e) {
+          e.preventDefault()
+          var that = this
+
+          that.flag = false
+          // that.ctx.clearRect(0, 0, that.canvas.width, that.canvas.height)
+          that.ctx.drawImage(that.image1, 0, 0, that.canvas.width, that.canvas.height)
+        },
+      }
+
+      window.onload = function () {
+        photo.init()
+      }
+    </script>
+  </body>
+</html>
